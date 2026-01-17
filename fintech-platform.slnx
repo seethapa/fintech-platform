@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="src/Admin.API/Admin.API.csproj" />
+  <Project Path="src/Audit.API/Audit.API.csproj" />
+  <Project Path="src/Merchant.API/Merchant.API.csproj" />
+  <Project Path="src/Payment.API/Payment.API.csproj" />
+  <Project Path="src/Report.API/Report.API.csproj" />
+  <Project Path="src/Shared.Auth/Shared.Auth.csproj" />
+  <Project Path="src/Shared.Data/Shared.Data.csproj" Id="e5dd2ee8-ed45-4aa0-89cf-df447f3df637" />
+  <Project Path="src/Shared.Middleware/Shared.Middleware.csproj" Id="c216fda6-ae5e-421b-a909-75c3c825bb74" />
+  <Project Path="src/Shared.Models/Shared.Models.csproj" Id="eebed381-b802-4d3c-a932-7d443970b889" />
+</Solution>
