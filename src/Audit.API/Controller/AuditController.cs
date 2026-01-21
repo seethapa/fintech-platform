@@ -13,8 +13,8 @@ public class AuditController : ControllerBase
     public AuditController(IMongoClient client)
     {
         _collection = client
-            .GetDatabase("audit")
-            .GetCollection<AuditEvent>("events");
+             .GetDatabase("auditdb")
+             .GetCollection<AuditEvent>("logs");
     }
 
     [HttpPost]

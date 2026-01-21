@@ -29,7 +29,7 @@ builder.Services.AddAuthorization(options =>
 
 // SQL (read-heavy)
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration["SqlConnectionString"]));
+    opt.UseSqlServer(builder.Configuration["sqlconnectiondev"]));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

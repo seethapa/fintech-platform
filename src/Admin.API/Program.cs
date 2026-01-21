@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Data;
 using Shared.Middleware;
 using Shared.Auth;
-
+using Polly;
+using Polly.Extensions.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,14 +30,16 @@ builder.Services.AddAuthorization(options =>
 
 // DB
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration["SqlConnectionString"]));
+    opt.UseSqlServer(builder.Configuration["SqlConnectiondev"]));
 
 builder.Services.AddControllers();
 
-builder.Services.AddHttpClient<Shared.Auth.IAuditClient, Shared.Auth.AuditClient>(client =>
+builder.Services.AddHttpClient<IAuditClient, AuditClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AuditApiUrl"]!);
-});
+})
+.AddPolicyHandler(GetRetryPolicy())
+.AddPolicyHandler(GetCircuitBreakerPolicy());
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -61,3 +64,23 @@ app.MapControllers();
 app.Run();
 
 
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError() // 5xx, 408
+        .WaitAndRetryAsync(
+            retryCount: 3,
+            sleepDurationProvider: retryAttempt =>
+                TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+        );
+}
+
+static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .CircuitBreakerAsync(
+            handledEventsAllowedBeforeBreaking: 5,
+            durationOfBreak: TimeSpan.FromSeconds(30)
+        );
+}
